@@ -53,27 +53,27 @@ resource "aws_iam_role_policy_attachment" "eks_cni_policy" {
 }
 
 resource "aws_eks_cluster" "eks_cluster" {
-  name     = "my-eks-cluster"
+  name     = var.cluster_name
   role_arn = aws_iam_role.eks_cluster_role.arn
 
   vpc_config {
-    subnet_ids = ["subnet-0123456789abcdef0", "subnet-0123456789abcdef1"]
+    subnet_ids = var.subnet_ids
   }
 }
 
 resource "aws_eks_node_group" "eks_node_group" {
   cluster_name    = aws_eks_cluster.eks_cluster.name
-  node_group_name = "eks-node-group"
+  node_group_name = var.node_group_name
   node_role_arn   = aws_iam_role.eks_node_group_role.arn
-  subnet_ids      = ["subnet-testing0", "subnet-testing1"]
+  subnet_ids      = var.subnet_ids
 
   scaling_config {
-    desired_size = 2
-    max_size     = 3
-    min_size     = 1
+    desired_size = var.desired_size
+    max_size     = var.max_size
+    min_size     = var.min_size
   }
 
-  instance_types = ["t2.micro"]
+  instance_types = [var.instance_type]
   disk_size      = 20
 }
 
